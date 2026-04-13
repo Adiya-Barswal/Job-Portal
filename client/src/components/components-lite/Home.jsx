@@ -2,6 +2,7 @@ import React from 'react'
 import Navbar from './Navbar'
 import Header from './Header'
 import Categories from './Categories'
+import LatestJob from './LatestJob'
 
 function Home() {
   return (
@@ -9,9 +10,10 @@ function Home() {
       <Navbar></Navbar>
       <Header />
          <Categories />
+         <LatestJob />
     {/*
    
-      <LatestJob />
+      
       <Footer /> */}
     </div>
   )
