@@ -10,6 +10,8 @@ import {
 import Home from "./components/components-lite/Home";
 import Login from "./components/authentication/Login";
 import Register from "./components/authentication/Register";
+import PrivacyPolicy from "./components/components-lite/PrivacyPolicy";
+import TermService from "./components/components-lite/TermService";
 
 const appRouter = createBrowserRouter([
   {
@@ -26,6 +28,16 @@ const appRouter = createBrowserRouter([
     path: "/register",
     element:<Register />
   },
+  {
+   path:"/privacy-policy" ,
+    element:<PrivacyPolicy />,
+    
+
+  },
+  {
+  path: "/terms",
+  element: <TermService />,
+},
 ]);
 
 function App() {

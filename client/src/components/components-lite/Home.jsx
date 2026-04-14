@@ -3,6 +3,7 @@ import Navbar from './Navbar'
 import Header from './Header'
 import Categories from './Categories'
 import LatestJob from './LatestJob'
+import Footer from './Footer'
 
 function Home() {
   return (
@@ -11,10 +12,8 @@ function Home() {
       <Header />
          <Categories />
          <LatestJob />
-    {/*
-   
-      
-      <Footer /> */}
+         <Footer />
+    
     </div>
   )
 }
