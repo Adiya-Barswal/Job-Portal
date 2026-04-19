@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import Navbar from '../components-lite/Navbar'
+
 //import { Label } from 'radix-ui'
 //import { Input } from 'postcss'
 
@@ -98,7 +98,7 @@ navigate("/login");
 
   return (
     <div>
-      <Navbar></Navbar>
+      
 
     <div className='flex items-center justify-center max-w-7xl mx-auto'>
       

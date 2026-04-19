@@ -27,9 +27,11 @@ function Navbar() {
         {/*right */}
         <div className="flex items-center gap-10">
             <ul className='flex font-medium items-center gap-6'>
-                <li>Home</li>
+              
+                <Link to="/">Home</Link>
                 <li>Browse</li>
-                <li>Jobs</li>
+                <Link to={"/Jobs"}>Jobs</Link>
+                
                 
             </ul>
 
@@ -42,7 +44,7 @@ function Navbar() {
                      {" "}
                      <Button variant="outline">Login</Button>
                      </Link>
-                     <Link to="register" >
+                     <Link to="/register" >
                      {" "}
                      <Button className="bg-red-600 hover:bg-red-700">Register</Button>
                      </Link>
