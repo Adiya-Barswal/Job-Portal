@@ -29,7 +29,7 @@ function Navbar() {
             <ul className='flex font-medium items-center gap-6'>
               
                 <Link to="/">Home</Link>
-                <li>Browse</li>
+                <Link to="/browse">Browse</Link>
                 <Link to={"/Jobs"}>Jobs</Link>
                 
                 
