@@ -14,6 +14,7 @@ import PrivacyPolicy from "./components/components-lite/PrivacyPolicy";
 import TermService from "./components/components-lite/TermService";
 import Jobs from "./components/components-lite/Jobs";
 import Browse from "./components/components-lite/Browse";
+import Profile from "./components/components-lite/Profile";
 
 const appRouter = createBrowserRouter([
   {
@@ -32,6 +33,11 @@ const appRouter = createBrowserRouter([
         path: "register",
         element: <Register />,
       },
+      {
+        path: "profile",
+        element: <Profile />,
+      },
+
       {
         path: "privacy-policy",
         element: <PrivacyPolicy />,
