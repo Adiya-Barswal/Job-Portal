@@ -2,20 +2,67 @@
 import React from "react";
 import { Button } from "@/components/ui/button"
 
-import { Avatar, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { LogOut, User2 } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner";
+import { USER_API_ENDPOINT } from "@/utils/data";
+import axios from "axios";
+import { setUser } from "@/redux/authSlice";
 
 function Navbar() {
    {/**first time    hamne ye kiya const user =false; */} 
 
    const{user} = useSelector((store) => store.auth)
+   const dispatch = useDispatch();
+   const navigate = useNavigate();
+
+
+   {/** for logout */}
+
+   const logoutHandler = async () => {
+
+  try {
+
+    const response = await axios.get(
+      `${USER_API_ENDPOINT}/logout`,
+      {
+        withCredentials: true
+      }
+    );
+
+    if (response.data.success) {
+
+      toast.success("Logged out successfully");
+
+      dispatch(setUser(null));
+
+      navigate("/");
+
+      toast.success("Logout successfully")
+
+    } else {
+
+      toast.error("Failed to log out");
+
+    }
+
+  } catch (error) {
+
+    console.log(error);
+
+    toast.error(error.response.data.message);
+
+  }
+};
+
+
   return (
     <div className='bg-white'>
         <div className="flex items-center justify-between mx-auto max-w-7xl h-16">
@@ -57,21 +104,23 @@ function Navbar() {
                    <Popover>
       <PopoverTrigger asChild>
         <Avatar className="cursor-pointer">
-  <AvatarImage src="https://github.com/shadcn.png" />
-  {/*<AvatarFallback>CN</AvatarFallback>*/}
+  <AvatarImage src={user?.profile?.profilePhoto} />
+
+  {/**if photo does not upload then names comes photo */}
+  <AvatarFallback>{user?.fullname?.charAt(0).toUpperCase()}</AvatarFallback>
 </Avatar >
       </PopoverTrigger>
 <PopoverContent align="end" sideOffset={8} className="w-80  translate-x-8">
 <div className="flex items-center gap-4 ">
  <Avatar className="cursor-pointer">
-  <AvatarImage src="https://github.com/shadcn.png" />
+  <AvatarImage src={user?.profile?.profilePhoto} />
   {/*<AvatarFallback>CN</AvatarFallback>*/}
 </Avatar >
    {/*text */}
 <div className="flex flex-col">
-      <h3 className="font-medium">Aditya Barswall</h3>
-      <p className="text-sm text-muted-foreground">Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis perferendis quasi magni laborum a placeat voluptate rem animi reprehenderit dignissimos culpa !
-
+      <h3 className="font-medium">{user?.fullname}</h3>
+      <p className="text-sm text-muted-foreground">
+        {user?.profile?.bio}
       </p>
     </div>
 </div> 
@@ -84,7 +133,7 @@ function Navbar() {
                 </div>
                 <div className="flex w-fit items-center gap-2 cursor-pointer">
                     <LogOut></LogOut>
-                    <Button variant="link">Logout</Button>
+                    <Button onClick={logoutHandler} variant="link">Logout</Button>
                 </div>
                 
                 

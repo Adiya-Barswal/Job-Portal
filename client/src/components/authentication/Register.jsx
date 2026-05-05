@@ -19,7 +19,7 @@ import { setLoading } from '@/redux/authSlice'
 
 const Register = () => {
   const [input, setInput]= useState({
-    fullName:"",
+    fullname:"",
     email:"",
     password:"",
     role:"",
@@ -50,7 +50,7 @@ const Register = () => {
     // register
     const formData = new FormData();
 
-    formData.append("fullName", input.fullName);
+    formData.append("fullname", input.fullname);
     formData.append("email", input.email);
     formData.append("password", input.password);
     formData.append("phoneNumber", input.phoneNumber);
@@ -109,8 +109,8 @@ navigate("/login");
         <h1 className="font-bold text-xl mb-5  text-center text-blue-500 ">Register</h1>
         {/*Name*/}
         <div className='my-2'>
-          <Label>Fullname</Label>
-          <Input type="text" value={input.fullName} name="fullName" onChange={changeEventHandler} placeholder="john doe"   className="focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-black"></Input>
+          <Label>fullname</Label>
+          <Input type="text" value={input.fullname} name="fullname" onChange={changeEventHandler} placeholder="john doe"   className="focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-black"></Input>
         </div>
 
         {/*email*/}

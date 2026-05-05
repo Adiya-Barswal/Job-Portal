@@ -1,20 +1,21 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import getDataUri from "../utils/datauri.js";
+import cloudinary from "../utils/cloud.js";
 
 
 // ======== REGISTER =====
 export const register = async (req, res) => {
   try {
-    console.log("===== REGISTER API HIT =====");
+    
 
     
 
-    const { fullName, email, phoneNumber, password, role } = req.body;
+    const { fullname, email, phoneNumber, password, role } = req.body;
 
     // ✅ validation
-    if (!fullName || !email || !phoneNumber || !password || !role) {
-      
+    if (!fullname || !email || !phoneNumber || !password || !role) {
       return res.status(400).json({
         message: "Something is missing",
         success: false
@@ -22,7 +23,6 @@ export const register = async (req, res) => {
     }
 
     
-
     // check existing user
     const existingUser = await User.findOne({ email });
 
@@ -34,20 +34,29 @@ export const register = async (req, res) => {
       });
     }
 
+    // ✅ Cloudinary upload (profile photo)
+    let profilePhotoUrl = "";
+    const file = req.file;
 
+    if (file) {
+      const fileUri = getDataUri(file);
+      const cloudinaryResponse = await cloudinary.uploader.upload(fileUri.content);
+      profilePhotoUrl = cloudinaryResponse.secure_url;
+    }
 
     // hash password
     const hashedPassword = await bcrypt.hash(password, 10);
-    
 
     // create user
-    
     const user = await User.create({
-      fullName,
+      fullname,
       email,
       phoneNumber,
       password: hashedPassword,
-      role
+      role,
+      profile: {
+        profilePhoto: profilePhotoUrl  // ✅ pehle yeh missing tha
+      }
     });
 
     
@@ -56,13 +65,17 @@ export const register = async (req, res) => {
       message: "User registered successfully",
       user,
       success: true
-    });
+      });
+   } catch (error) {
 
-  } catch (error) {
-    
+    console.log("❌ REGISTER ERROR:", error);
+
+    return res.status(500).json({
+      message: "Register failed",
+      success: false
+    });
   }
 };
-
 
 
 // ======== LOGIN =====
@@ -72,7 +85,7 @@ export const login = async (req, res) => {
 
     const { email, password, role } = req.body;
 
-    if (!email || !password) {
+    if (!email || !password || !role) {
       return res.status(400).json({
         message: "Email or password missing",
         success: false
@@ -114,7 +127,7 @@ export const login = async (req, res) => {
         maxAge: 1 * 24 * 60 * 60 * 1000
       })
       .json({
-        message: `Welcome back ${user.fullName}`,
+        message: `Welcome back ${user.fullname}`,
         user,
         success: true
       });
@@ -147,10 +160,24 @@ export const logout = async (req, res) => {
 // ======== UPDATE PROFILE =====
 export const updateProfile = async (req, res) => {
   try {
-    console.log("===== UPDATE PROFILE =====");
+   
 
-    const { fullName, email, phoneNumber, bio, skills } = req.body;
-    const userId = req.id;
+    const { fullname, email, phoneNumber, bio, skills } = req.body;
+
+    const file= req.file;
+
+    // cloudinary upload
+
+    let cloudinaryResponce;
+
+
+    if (file) {
+      const fileUri = getDataUri(file);
+
+      cloudinaryResponce = await cloudinary.uploader.upload(fileUri.content);
+    }
+
+    const userId = req.userId;
 
     let user = await User.findById(userId);
 
@@ -161,16 +188,27 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-    if (fullName) user.fullName = fullName;
+    if (fullname) user.fullname = fullname;
     if (email) user.email = email;
     if (phoneNumber) user.phoneNumber = phoneNumber;
 
     if (bio) user.profile.bio = bio;
     if (skills) user.profile.skills = skills.split(",");
 
+   // for resume  (cloudinary time)
+   if (cloudinaryResponce) {
+
+      user.profile.resume = cloudinaryResponce.secure_url;
+
+      // BUG FIX ✅
+      // wrong property fixed
+      user.profile.resumeOriginalName = file.originalname;
+    }
+
+    // save updated user
     await user.save();
 
-    console.log("✅ Profile updated");
+    
 
     return res.status(200).json({
       message: "Profile updated successfully",

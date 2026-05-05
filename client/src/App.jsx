@@ -15,6 +15,7 @@ import TermService from "./components/components-lite/TermService";
 import Jobs from "./components/components-lite/Jobs";
 import Browse from "./components/components-lite/Browse";
 import Profile from "./components/components-lite/Profile";
+import Description from "./components/components-lite/Description";
 
 const appRouter = createBrowserRouter([
   {
@@ -33,6 +34,12 @@ const appRouter = createBrowserRouter([
         path: "register",
         element: <Register />,
       },
+
+       {
+        path: "/description/:id",
+        element: <Description />,
+      },
+
       {
         path: "profile",
         element: <Profile />,
