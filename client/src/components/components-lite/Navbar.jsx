@@ -76,14 +76,26 @@ function Navbar() {
 
         {/*right */}
         <div className="flex items-center gap-10">
-            <ul className='flex font-medium items-center gap-6'>
-              
-                <Link to="/">Home</Link>
-                <Link to="/browse">Browse</Link>
-                <Link to={"/Jobs"}>Jobs</Link>
-                
-                
-            </ul>
+           <ul className='flex font-medium items-center gap-6'>
+
+            {user && user.role === "recruiter" ? (
+              //  Recruiter links
+              <>
+                <li>
+                  <Link to="/admin/companies">Companies</Link>
+                  </li>
+                <li><Link to="/admin/jobs">Jobs</Link></li>
+              </>
+            ) : (
+              //  Student links
+              <>
+                <li><Link to="/">Home</Link></li>
+                <li><Link to="/browse">Browse</Link></li>
+                <li><Link to="/jobs">Jobs</Link></li>
+              </>
+            )}
+
+          </ul>
 
             {/* CONDITION FIX  from turnary operator*/}
 
@@ -127,10 +139,20 @@ function Navbar() {
 
        {/* Buttons */}
               <div className="flex flex-col my-2 text-gray-600  mt-4">
-                <div className="flex w-fit items-center gap-2 cursor-pointer">
+
+                {
+                  user && user.role === "student" && (
+                    <div className="flex w-fit items-center gap-2 cursor-pointer">
                     <User2></User2>
                     <Button variant="link"> <Link to="/profile">Profile</Link></Button>
                 </div>
+
+                  )
+                }
+
+
+
+               
                 <div className="flex w-fit items-center gap-2 cursor-pointer">
                     <LogOut></LogOut>
                     <Button onClick={logoutHandler} variant="link">Logout</Button>

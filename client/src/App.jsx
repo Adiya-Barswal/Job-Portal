@@ -1,8 +1,5 @@
 import React from "react";
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import Layout from "./components/components-lite/Layout";
 
@@ -16,14 +13,18 @@ import Jobs from "./components/components-lite/Jobs";
 import Browse from "./components/components-lite/Browse";
 import Profile from "./components/components-lite/Profile";
 import Description from "./components/components-lite/Description";
+import Companies from "./components/admincompanies/Companies";
+import CompanyCreate from "./components/admincompanies/CompanyCreate";
+import CompanySetup from "./components/admincompanies/CompanySetup";
 
+import AdminJobs from "./components/admincompanies/AdminJobs";
 const appRouter = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,   // 👈 parent
+    element: <Layout />,
     children: [
       {
-        index: true,       // 🔥 HOME FIX (MOST IMPORTANT)
+        index: true,
         element: <Home />,
       },
       {
@@ -34,17 +35,14 @@ const appRouter = createBrowserRouter([
         path: "register",
         element: <Register />,
       },
-
-       {
+      {
         path: "/description/:id",
         element: <Description />,
       },
-
       {
         path: "profile",
         element: <Profile />,
       },
-
       {
         path: "privacy-policy",
         element: <PrivacyPolicy />,
@@ -60,6 +58,24 @@ const appRouter = createBrowserRouter([
       {
         path: "browse",
         element: <Browse />,
+      },
+
+      // admin routes
+      {
+        path: "/admin/companies",
+        element: <Companies />,
+      },
+      {
+        path: "/admin/companies/create",
+        element: <CompanyCreate />,
+      },
+      {
+        path: "/admin/companies/:id",
+        element: <CompanySetup />,
+      },
+      {
+        path: "/admin/jobs",
+        element: <AdminJobs />, // ✅ AdminJobs — Jobs nahi
       },
     ],
   },

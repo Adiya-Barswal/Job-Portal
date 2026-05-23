@@ -7,6 +7,7 @@ import {
 } from "../controllers/company.controller.js";
 
 import isAuthenticated from "../middlewares/isAuthenticated.js";
+import { singleUpload } from "../middlewares/multer.js";
 
 const router = express.Router();
 
@@ -20,6 +21,6 @@ router.get("/get", isAuthenticated, getCompanies);
 router.get("/get/:id", isAuthenticated, getCompanyById);
 
 //  Update company
-router.put("/update/:id", isAuthenticated, updateCompany);
+router.put("/update/:id", isAuthenticated, singleUpload, updateCompany);
 
 export default router;

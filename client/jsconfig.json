@@ -1,9 +1,11 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
+    "checkJs": false,
     "paths": {
       "@/*": ["src/*"]
     },
     "ignoreDeprecations": "6.0"
   }
 }
+

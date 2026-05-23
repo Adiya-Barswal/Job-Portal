@@ -23,7 +23,5 @@ router.get("/logout", logout);
 // UPDATE PROFILE (protected route)
 router.post("/profile/update", isAuthenticated, singleUpload, updateProfile);
 
-// ✅ FIX: singleUpload ki jagah multiUpload lagaya
-router.post("/profile/update", isAuthenticated, multiUpload, updateProfile);
 
 export default router;
