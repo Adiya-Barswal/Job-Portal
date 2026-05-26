@@ -1,14 +1,14 @@
-
-
 import authReducer from "./authSlice";
-import jobReducer from "./jobSlice";      // jobSlice.reducer
-import companyReducer from "./companySlice"; // companySlice.reducer
+import jobReducer from "./jobSlice";
+import companyReducer from "./companySlice";
+import applicationReducer from "./applicationSlice"; // ✅ yeh add karo
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 
 const storage = {
   getItem: (key) => Promise.resolve(window.localStorage.getItem(key)),
-  setItem: (key, value) => Promise.resolve(window.localStorage.setItem(key, value)),
+  setItem: (key, value) =>
+    Promise.resolve(window.localStorage.setItem(key, value)),
   removeItem: (key) => Promise.resolve(window.localStorage.removeItem(key)),
 };
 
@@ -21,9 +21,8 @@ const persistConfig = {
 const rootReducer = combineReducers({
   auth: authReducer,
   job: jobReducer,
-  company: companyReducer, 
-  
-
+  company: companyReducer,
+  application: applicationReducer, // ✅ sahi hai
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

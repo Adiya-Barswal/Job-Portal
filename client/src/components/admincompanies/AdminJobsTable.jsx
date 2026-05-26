@@ -67,7 +67,7 @@ function AdminJobsTable({ searchJobByText }) {
                     <PopoverTrigger>
                       <MoreHorizontal />
                     </PopoverTrigger>
-                    <PopoverContent className="w-32">
+                    <PopoverContent className="w-32 bg-white shadow-lg border rounded-xl p-2">
                       <div
                         onClick={() =>
                           navigate(`/admin/companies/${job?.company?._id}`)
