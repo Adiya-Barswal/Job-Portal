@@ -7,7 +7,6 @@ export const applyJob = async (req, res) => {
     const userId = req.userId;
     const jobId = req.params.id;
 
-
     // 🔥 DEBUG LOGS (yahi likhna hai)
     console.log("userId:", userId);
     console.log("jobId:", jobId);
@@ -36,9 +35,8 @@ export const applyJob = async (req, res) => {
     const job = await Job.findById(jobId);
 
     // 🔥 YAHAN ADD KARNA HAI
-console.log("job:", job);
+    console.log("job:", job);
 
-    
     if (!job) {
       return res.status(404).json({
         message: "Job not found",
@@ -62,18 +60,15 @@ console.log("job:", job);
       message: "Applied successfully",
       success: true,
     });
-
   } catch (error) {
     console.log(error);
 
-    // ✅ FIX: response add kiya (warna request hang hoti)
     return res.status(500).json({
       message: "Error applying job",
       success: false,
     });
   }
 };
-
 
 // 🔹 Get Applied Jobs
 export const getAppliedJobs = async (req, res) => {
@@ -90,18 +85,10 @@ export const getAppliedJobs = async (req, res) => {
         },
       });
 
-    if (applications.length === 0) {
-      return res.status(404).json({
-        message: "No applications found",
-        success: false,
-      });
-    }
-
     return res.status(200).json({
       applications, // ✅ FIX: application ❌ → applications ✅
       success: true,
     });
-
   } catch (error) {
     console.log(error);
 
@@ -111,7 +98,6 @@ export const getAppliedJobs = async (req, res) => {
     });
   }
 };
-
 
 //  Get Applicants (Admin)
 export const getApplicants = async (req, res) => {
@@ -130,7 +116,6 @@ export const getApplicants = async (req, res) => {
       job,
       success: true,
     });
-
   } catch (error) {
     console.log(error);
 
@@ -140,7 +125,6 @@ export const getApplicants = async (req, res) => {
     });
   }
 };
-
 
 //  Update Status
 export const updateStatus = async (req, res) => {
@@ -172,7 +156,6 @@ export const updateStatus = async (req, res) => {
       application,
       success: true,
     });
-
   } catch (error) {
     console.log(error);
 

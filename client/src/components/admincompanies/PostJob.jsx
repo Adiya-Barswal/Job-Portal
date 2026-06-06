@@ -88,7 +88,7 @@ function PostJob() {
               name="requirements"
               value={input.requirements}
               onChange={changeHandler}
-              placeholder="React, Node.js, MongoDB"
+              placeholder="React, Node.js, MongoDB, "
             />
           </div>
 
@@ -104,14 +104,14 @@ function PostJob() {
           </div>
 
           <div>
-            <Label>Salary (LPA)</Label>
+            <Label>Salary</Label>
             <Input
               className="my-2 focus-visible:border-black focus-visible:ring-0"
               name="salary"
               value={input.salary}
               onChange={changeHandler}
-              placeholder="10"
-              type="number"
+              placeholder="e.g. 10 LPA or 20k-30k"
+              type="text" // ✅ text — taaki LPA bhi likh sake
             />
           </div>
 

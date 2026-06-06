@@ -17,11 +17,11 @@ const Description = () => {
   // Fetch single job
   useGetSingleJobs(jobId);
 
-  // Redux store se data
+  // Redux store data
   const { singleJob } = useSelector((store) => store.job);
   const { user } = useSelector((store) => store.auth);
 
-  // Check user already applied or not
+  // Check already applied or not
   const isApplied =
     singleJob?.applications?.some(
       (app) =>
@@ -40,12 +40,12 @@ const Description = () => {
       if (res.data.success) {
         toast.success(res.data.message);
 
-        const updatedSingleJob = {
+        const updatedJob = {
           ...singleJob,
           applications: [...singleJob.applications, { applicant: user?._id }],
         };
 
-        dispatch(setSingleJob(updatedSingleJob));
+        dispatch(setSingleJob(updatedJob));
       }
     } catch (error) {
       console.log(error);
@@ -55,26 +55,24 @@ const Description = () => {
 
   return (
     <div className="max-w-7xl mx-auto my-10 p-6 bg-white rounded-xl shadow">
-      {/* Job Title */}
-      <div>
-        <h1 className="text-2xl font-bold">{singleJob?.title}</h1>
-      </div>
+      {/* Title */}
+      <h1 className="text-2xl font-bold">{singleJob?.title}</h1>
 
-      {/* Top Badges */}
+      {/* Badges */}
       <div className="flex gap-2 items-center mt-4">
-        <Badge className="text-blue-600 font-bold" variant="ghost">
+        <Badge variant="ghost" className="text-blue-600 font-bold">
           {singleJob?.position} Position
         </Badge>
 
-        <Badge className="text-[#FA4F09] font-bold" variant="ghost">
+        <Badge variant="ghost" className="text-[#FA4F09] font-bold">
           {singleJob?.salary} LPA
         </Badge>
 
-        <Badge className="text-blue-600 font-bold" variant="ghost">
+        <Badge variant="ghost" className="text-blue-600 font-bold">
           {singleJob?.location}
         </Badge>
 
-        <Badge className="text-black font-bold" variant="ghost">
+        <Badge variant="ghost" className="text-black font-bold">
           {singleJob?.jobType}
         </Badge>
       </div>
@@ -84,7 +82,7 @@ const Description = () => {
         <Button
           onClick={isApplied ? null : applyJobHandler}
           disabled={isApplied}
-          className={`rounded-md px-4 py-2 ${
+          className={`px-4 py-2 rounded-md ${
             isApplied
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-black text-white hover:bg-gray-800"
@@ -96,69 +94,58 @@ const Description = () => {
 
       {/* Job Details */}
       <div className="mt-6 border-t pt-4">
-        <h2 className="font-bold text-lg mb-4">Job Details</h2>
+        <h2 className="text-lg font-bold mb-4">Job Details</h2>
 
         <div className="space-y-3 text-sm">
           <div>
-            <span className="font-semibold">Role: </span>
-            <span className="text-gray-700">{singleJob?.title}</span>
+            <span className="font-semibold">Role:</span> {singleJob?.title}
           </div>
 
           <div>
-            <span className="font-semibold">Location: </span>
-            <span className="text-gray-700">{singleJob?.location}</span>
+            <span className="font-semibold">Location:</span>{" "}
+            {singleJob?.location}
           </div>
 
           <div>
-            <span className="font-semibold">Salary: </span>
-            <span className="text-gray-700">{singleJob?.salary} LPA</span>
+            <span className="font-semibold">Salary:</span> {singleJob?.salary}{" "}
+            LPA
           </div>
 
           <div>
-            <span className="font-semibold">Experience: </span>
-            <span className="text-gray-700">
-              {singleJob?.experienceLevel} Years
-            </span>
+            <span className="font-semibold">Experience:</span>{" "}
+            {singleJob?.experienceLevel} Years
           </div>
 
           <div>
-            <span className="font-semibold">Total applicants: </span>
-            <span className="text-gray-700">
-              {singleJob?.applications?.length}
-            </span>
+            <span className="font-semibold">Total Applicants:</span>{" "}
+            {singleJob?.applications?.length}
           </div>
 
           <div>
-            <span className="font-semibold">Posted: </span>
-            <span className="text-gray-700">
-              {singleJob?.createdAt?.split("T")[0]}
-            </span>
+            <span className="font-semibold">Posted:</span>{" "}
+            {singleJob?.createdAt?.split("T")[0]}
           </div>
 
           <div>
-            <span className="font-semibold">Job Type: </span>
-            <span className="text-gray-700">{singleJob?.jobType}</span>
+            <span className="font-semibold">Job Type:</span>{" "}
+            {singleJob?.jobType}
           </div>
 
           <div>
-            <span className="font-semibold">Total Positions: </span>
-            <span className="text-gray-700">{singleJob?.position}</span>
+            <span className="font-semibold">Total Positions:</span>{" "}
+            {singleJob?.position}
           </div>
 
-          {/* Requirements */}
           <div>
-            <span className="font-semibold">Requirements: </span>
-
-            <span className="text-gray-700">
-              {singleJob?.requirements?.join(", ")}
-            </span>
+            <span className="font-semibold">Requirements:</span>{" "}
+            {singleJob?.requirements?.join(", ")}
           </div>
 
-          {/* About Company */}
+          {/* Company Info */}
           <div className="mt-6 border-t pt-4">
-            <h2 className="font-bold text-lg mb-2">About the Company</h2>
+            <h2 className="text-lg font-bold mb-2">About the Company</h2>
 
-            <p className="text-gray-700 text-sm leading-7">
+            <p className="text-gray-700">
               {singleJob?.company?.description || "No description available"}
             </p>
           </div>

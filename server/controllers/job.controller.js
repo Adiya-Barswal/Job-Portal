@@ -45,7 +45,7 @@ export const postJob = async (req, res) => {
       experienceLevel,
       position,
       company: companyId,
-       createdBy: userId,
+      createdBy: userId,
     });
 
     return res.status(201).json({
@@ -62,9 +62,7 @@ export const postJob = async (req, res) => {
   }
 };
 
-
-
-//  Get All Jobs      for users 
+//  Get All Jobs      for users
 
 export const getAllJobs = async (req, res) => {
   try {
@@ -73,18 +71,14 @@ export const getAllJobs = async (req, res) => {
       $or: [
         { title: { $regex: keyword, $options: "i" } },
         { description: { $regex: keyword, $options: "i" } },
+        { location: { $regex: keyword, $options: "i" } },
+        { experienceLevel: { $regex: keyword, $options: "i" } },
       ],
     };
 
     const jobs = await Job.find(query)
-         .populate("company").sort({createdAt:-1});
-
-    if (jobs.length ===0) {
-      return res.status(404).json({
-        message: "Jobs not found.",
-        success: false,
-      });
-    }
+      .populate("company")
+      .sort({ createdAt: -1 });
 
     return res.status(200).json({
       jobs,
@@ -95,13 +89,11 @@ export const getAllJobs = async (req, res) => {
   }
 };
 
-
 //  Get Job by ID     for users
 export const getJobById = async (req, res) => {
   try {
-
-    const jobId= (req.params.id);
-      const job = await Job.findById(jobId)
+    const jobId = req.params.id;
+    const job = await Job.findById(jobId)
       .populate("company")
       .populate("applications");
 
@@ -125,8 +117,6 @@ export const getJobById = async (req, res) => {
   }
 };
 
-
-
 //  Get Admin Jobs   (jo recruiter ne banayi)
 export const getAdminJobs = async (req, res) => {
   try {
@@ -134,12 +124,12 @@ export const getAdminJobs = async (req, res) => {
 
     const jobs = await Job.find({ createdBy: adminId }).populate("company");
 
-     if (jobs === 0) {
+    if (jobs.length === 0) {
       return res.status(404).json({
         message: "Job not found",
         success: false,
       });
-    };
+    }
 
     return res.status(200).json({
       jobs,
@@ -153,8 +143,6 @@ export const getAdminJobs = async (req, res) => {
     });
   }
 };
-
-
 
 //  Update Job
 export const updateJob = async (req, res) => {
@@ -182,7 +170,7 @@ export const updateJob = async (req, res) => {
         experienceLevel,
         position,
       },
-      { new: true }
+      { new: true },
     );
 
     if (!job) {
@@ -206,8 +194,6 @@ export const updateJob = async (req, res) => {
   }
 };
 
-
-
 //  Delete Job
 export const deleteJob = async (req, res) => {
   try {
@@ -230,5 +216,53 @@ export const deleteJob = async (req, res) => {
       message: "Error deleting job",
       success: false,
     });
+  }
+};
+
+// Save Job
+export const saveJob = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { jobId } = req.params;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+        success: false,
+      });
+    }
+
+    if (user.savedJobs.includes(jobId)) {
+      return res.status(400).json({
+        message: "Job already saved",
+        success: false,
+      });
+    }
+
+    user.savedJobs.push(jobId);
+    await user.save();
+
+    return res.status(200).json({
+      message: "Job saved successfully",
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// Get Saved Jobs
+export const getSavedJobs = async (req, res) => {
+  try {
+    const user = await User.findById(req.userId).populate("savedJobs");
+
+    return res.status(200).json({
+      savedJobs: user.savedJobs,
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
   }
 };

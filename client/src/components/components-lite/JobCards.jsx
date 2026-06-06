@@ -17,10 +17,10 @@ function JobCards({ job }) {
 
   return (
     <div
-      onClick={() => navigate(`/jobs/${job?._id}`)} // ✅ Step 4: click pe detail page
+      onClick={() => navigate(`/description/${job._id}`)} //  click pe detail page
       className="p-5 rounded-md shadow-xl bg-white border border-gray-200 cursor-pointer hover:shadow-2xl hover:shadow-blue-400 hover:p-3"
     >
-      {/* ✅ Step 5: date */}
+      {/*  date */}
       <p className="text-sm text-gray-500">
         {daysAgoFunction(job?.createdAt) === 0
           ? "Today"

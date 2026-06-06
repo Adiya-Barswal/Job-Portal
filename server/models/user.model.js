@@ -4,42 +4,52 @@ const userSchema = new mongoose.Schema(
   {
     fullname: {
       type: String,
-      required: true
+      required: true,
     },
     email: {
       type: String,
       required: true,
-      unique: true
+      unique: true,
     },
     phoneNumber: {
       type: String,
-      required: true
+      required: true,
     },
     password: {
       type: String,
-      required: true
+      required: true,
+    },
+
+    // Forgot Password Fields
+    resetPasswordToken: {
+      type: String,
+    },
+
+    resetPasswordExpire: {
+      type: Date,
     },
     role: {
       type: String,
       enum: ["student", "recruiter"],
-      required: true
+      required: true,
     },
+
     profile: {
-      bio: { type: String, default:""},
+      bio: { type: String, default: "" },
       skills: [{ type: String }],
-      resume: { type: String },   //url to resume file 
+      resume: { type: String },
       resumeOriginalName: { type: String },
       company: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Company"
+        ref: "Company",
       },
       profilePhoto: {
         type: String,
-        default: ""
-      }
-    }
+        default: "",
+      },
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const User = mongoose.model("User", userSchema);

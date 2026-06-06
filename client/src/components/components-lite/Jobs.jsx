@@ -1,47 +1,71 @@
-import React from 'react';
-import FilterCard from './FilterCard';
-import Job1 from './Job1';
-import { useSelector } from 'react-redux';
-import useGetAllJobs from '@/hooks/useGetAllJobs';
+import React, { useEffect, useState } from "react";
 
-
-
-//const jobsArray = [1,2,3,4,5,6,7,8,9];
-
+import FilterCard from "./Filtercard";
+import Job1 from "./Job1";
+import { useSelector } from "react-redux";
+import { motion } from "framer-motion";
 
 const Jobs = () => {
+  const { allJobs, searchedQuery } = useSelector((store) => store.job);
 
-  useGetAllJobs()
+  // SAFE INITIAL STATE
+  const [filterJobs, setFilterJobs] = useState([]);
 
-  const {allJobs} = useSelector((store) => store.job);
+  useEffect(() => {
+    // agar search empty hai to saari jobs dikhao
+    if (!searchedQuery || searchedQuery.trim() === "") {
+      setFilterJobs(allJobs || []);
+      return;
+    }
+
+    // filtering
+    const query = searchedQuery.toLowerCase();
+    const filteredJobs = (allJobs || []).filter((job) => {
+      return (
+        job.title?.toLowerCase().includes(query) ||
+        job.description?.toLowerCase().includes(query) ||
+        job.location?.toLowerCase().includes(query) ||
+        job.experienceLevel?.toLowerCase().includes(query) ||
+        job.salary?.toString().includes(query)
+      );
+    });
+
+    setFilterJobs(filteredJobs);
+  }, [allJobs, searchedQuery]);
 
   return (
     <div>
-      <div className='max-w-7xl mx-auto mt-5'>
-        <div className='flex gap-5'>
-        {/**Filter card */}
-        <div className='w-[20%]'>
-          <FilterCard />
+      <div className="max-w-7xl mx-auto mt-5">
+        <div className="flex gap-5">
+          {/* FILTER SECTION */}
+          <div className="w-1/5">
+            <FilterCard />
           </div>
 
-      {/**Job card */}
-
-      {allJobs?.length <= 0 ? (
-              <span className='text-lg text-gray-500'> jobs not found </span>
-          
+          {/* JOB SECTION */}
+          {filterJobs?.length <= 0 ? (
+            <span className="text-lg text-gray-500">Job not found</span>
           ) : (
-          <div className='w-[80%] flex-1 h-[88vh] overflow-y-auto pb-5'>
-         <div className='grid grid-cols-3 gap-4'>  
-            {allJobs.map((job) => <Job1 key={job._id} job={job} />)}
-
-          </div>
-           </div>
+            <div className="flex-1 h-[88vh] overflow-y-auto pb-5">
+              <div className="grid grid-cols-3 gap-4">
+                {filterJobs.map((job) => (
+                  <motion.div
+                    key={job._id}
+                    initial={{ opacity: 0, x: 100 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -100 }}
+                    transition={{ duration: 0.4 }}
+                  >
+                    <Job1 job={job} />
+                  </motion.div>
+                ))}
+              </div>
+            </div>
           )}
-      </div>
-     
+        </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Jobs
+export default Jobs;

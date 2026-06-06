@@ -2,6 +2,8 @@ import authReducer from "./authSlice";
 import jobReducer from "./jobSlice";
 import companyReducer from "./companySlice";
 import applicationReducer from "./applicationSlice"; // ✅ yeh add karo
+import filterReducer from "./filterSlice";
+
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 
@@ -22,7 +24,8 @@ const rootReducer = combineReducers({
   auth: authReducer,
   job: jobReducer,
   company: companyReducer,
-  application: applicationReducer, // ✅ sahi hai
+  application: applicationReducer,
+  filter: filterReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
