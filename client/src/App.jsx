@@ -25,7 +25,7 @@ import PostJob from "./components/admincompanies/PostJob";
 import Applicants from "./components/admincompanies/Applicants";
 
 // protected route
-import ProtectedRoute from "./components/admincompanies/Protectedroute";
+import ProtectedRoute from "./components/admincompanies/ProtectedRoute";
 import useGetAllJobs from "./hooks/useGetAllJobs";
 
 const appRouter = createBrowserRouter([
