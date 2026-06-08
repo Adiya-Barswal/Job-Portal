@@ -23,6 +23,9 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.get("/", (req, res) => {
+  res.send("Job Portal Backend Running");
+});
 
 const PORT = process.env.PORT || 3000;
 
