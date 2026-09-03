@@ -59,10 +59,15 @@ export const register = async (req, res) => {
     });
 
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false, // Port 587 ke liye TLS
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
+      },
+      tls: {
+        rejectUnauthorized: false,
       },
     });
 
@@ -101,10 +106,6 @@ export const verifyRegisterOtp = async (req, res) => {
     const { email, otp } = req.body;
 
     const tempUser = await TempUser.findOne({ email });
-
-    //console.log("OTP from DB:", tempUser.otp);
-    //console.log("OTP from User:", otp);
-    // console.log("Email:", email);
 
     if (!tempUser) {
       return res.status(400).json({
@@ -237,10 +238,15 @@ export const forgotPassword = async (req, res) => {
     await user.save();
 
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
+      },
+      tls: {
+        rejectUnauthorized: false,
       },
     });
 
