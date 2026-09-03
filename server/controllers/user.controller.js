@@ -7,20 +7,15 @@ import nodemailer from "nodemailer";
 import getDataUri from "../utils/datauri.js";
 import cloudinary from "../utils/cloud.js";
 
-// Render IPv4 Enforced Nodemailer Transporter
+// Transporter Configuration
 const createTransporter = () => {
   return nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true, // Port 465 ke liye Direct SSL Connection
+    service: "gmail",
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
-    family: 4, // Render par IPv6 timeout completely stop karne ke liye
-    tls: {
-      rejectUnauthorized: false,
-    },
+    family: 4, // Strict IPv4 Enforce
   });
 };
 
@@ -77,18 +72,21 @@ export const register = async (req, res) => {
 
     const transporter = createTransporter();
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "Job Portal - Email Verification",
-      html: `
+    // Async Email (Bina await ke background mein chalega taaki API hang na ho)
+    transporter
+      .sendMail({
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: "Job Portal - Email Verification",
+        html: `
         <h2>Welcome to Job Portal</h2>
         <p>Your verification code is:</p>
         <h1>${otp}</h1>
         <p>This code is valid for 10 minutes.</p>
         <p>Thank you for using Job Portal.</p>
       `,
-    });
+      })
+      .catch((err) => console.error("Background Mail Error:", err));
 
     return res.status(200).json({
       message: "OTP sent to email",
@@ -245,12 +243,14 @@ export const forgotPassword = async (req, res) => {
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
     const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "Password Reset",
-      html: `<a href="${resetUrl}">Reset Password</a>`,
-    });
+    transporter
+      .sendMail({
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: "Password Reset",
+        html: `<a href="${resetUrl}">Reset Password</a>`,
+      })
+      .catch((err) => console.error("Reset Mail Error:", err));
 
     return res.status(200).json({
       message: "Reset link sent",
