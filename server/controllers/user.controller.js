@@ -7,10 +7,12 @@ import nodemailer from "nodemailer";
 import getDataUri from "../utils/datauri.js";
 import cloudinary from "../utils/cloud.js";
 
-// Transporter Configuration
+// Transporter Configuration (Explicit IPv4 & Port 465 SSL for Render)
 const createTransporter = () => {
   return nodemailer.createTransport({
-    service: "gmail",
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true, // SSL/TLS mode
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
@@ -72,18 +74,18 @@ export const register = async (req, res) => {
 
     const transporter = createTransporter();
 
-    // Async Email (Bina await ke background mein chalega taaki API hang na ho)
+    // Async Email (Bina await ke background mein dispatch)
     transporter
       .sendMail({
-        from: process.env.EMAIL_USER,
+        from: `"JobGuru" <${process.env.EMAIL_USER}>`, // Custom Sender Name
         to: email,
-        subject: "Job Portal - Email Verification",
+        subject: "JobGuru - Email Verification OTP",
         html: `
-        <h2>Welcome to Job Portal</h2>
+        <h2>Welcome to JobGuru</h2>
         <p>Your verification code is:</p>
-        <h1>${otp}</h1>
+        <h1 style="color: #4F46E5;">${otp}</h1>
         <p>This code is valid for 10 minutes.</p>
-        <p>Thank you for using Job Portal.</p>
+        <p>Thank you for using JobGuru.</p>
       `,
       })
       .catch((err) => console.error("Background Mail Error:", err));
@@ -245,9 +247,9 @@ export const forgotPassword = async (req, res) => {
 
     transporter
       .sendMail({
-        from: process.env.EMAIL_USER,
+        from: `"JobGuru" <${process.env.EMAIL_USER}>`,
         to: email,
-        subject: "Password Reset",
+        subject: "Password Reset - JobGuru",
         html: `<a href="${resetUrl}">Reset Password</a>`,
       })
       .catch((err) => console.error("Reset Mail Error:", err));
