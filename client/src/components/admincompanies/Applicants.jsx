@@ -15,7 +15,7 @@ import { APPLICATION_API_ENDPOINT } from "@/utils/data";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { setAllApplicants } from "@/redux/ApplicationSlice";
+import { setAllApplicants } from "@/redux/applicationSlice";
 
 const Applicants = () => {
   const params = useParams();
@@ -31,15 +31,15 @@ const Applicants = () => {
         );
 
         if (res.data.success) {
-          dispatch(setAllApplicants(res.data.job)); // ✅ Redux update
+          dispatch(setAllApplicants(res.data.job)); // Redux update
         }
       } catch (error) {
-        console.log(error); // ✅ catch ke andar
+        console.log(error);
       }
     };
 
-    fetchAllApplicants(); // ✅ call kiya
-  }, []);
+    fetchAllApplicants(); // call kiya
+  }, [dispatch, params.id]);
   return (
     <div className="max-w-6xl mx-auto my-10">
       <h1 className="text-2xl font-bold mb-5">
