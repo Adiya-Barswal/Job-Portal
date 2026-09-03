@@ -16,32 +16,44 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// cors
+// Allowed origins array for CORS
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "https://job-portal-xi-ivory.vercel.app",
+  process.env.CLIENT_URL,
+].filter(Boolean);
+
+// cors configuration
 const corsOptions = {
-  origin: process.env.CLIENT_URL,
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl) or matching origins
+    if (
+      !origin ||
+      allowedOrigins.includes(origin) ||
+      origin.endsWith(".vercel.app")
+    ) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
 };
 
 app.use(cors(corsOptions));
+
 app.get("/", (req, res) => {
   res.send("Job Portal Backend Running");
 });
 
 const PORT = process.env.PORT || 3000;
 
-//Api's(user, company, job)
-
+// Api's
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/company", companyRoute);
 app.use("/api/v1/job", jobRoute);
 app.use("/api/v1/application", applicationRoute);
-
-// for example
-
-//   "http://localhost:8000/api/v1/user/register"
-//   "http://localhost:8000/api/v1/user/login"
-//   "http://localhost:8000/api/v1/user/logout"
-//   "http://localhost:8000/api/v1/user/profile/update"
 
 // Start Server
 connectDB().then(() => {
