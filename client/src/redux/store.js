@@ -18,6 +18,8 @@ const persistConfig = {
   key: "root",
   version: 1,
   storage,
+  // Fix: loading aur non-essential temporary states ko persist hone se rokna
+  blacklist: ["filter"],
 };
 
 const rootReducer = combineReducers({

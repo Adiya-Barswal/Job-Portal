@@ -7,6 +7,21 @@ import nodemailer from "nodemailer";
 import getDataUri from "../utils/datauri.js";
 import cloudinary from "../utils/cloud.js";
 
+// REUSABLE NODEMAILER TRANSPORTER (Fixed for Render)
+const createTransporter = () => {
+  return nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+    family: 4, // Enforce IPv4 to stop Render timeout
+    tls: {
+      rejectUnauthorized: false,
+    },
+  });
+};
+
 // REGISTER
 export const register = async (req, res) => {
   try {
@@ -58,33 +73,19 @@ export const register = async (req, res) => {
       otpExpire: Date.now() + 10 * 60 * 1000,
     });
 
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false, // Port 587 ke liye TLS
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-      tls: {
-        rejectUnauthorized: false,
-      },
-    });
+    const transporter = createTransporter();
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: email,
       subject: "Job Portal - Email Verification",
       html: `
-    <h2>Welcome to Job Portal</h2>
-    <p>Your verification code is:</p>
-
-    <h1>${otp}</h1>
-
-    <p>This code is valid for 10 minutes.</p>
-
-    <p>Thank you for using Job Portal.</p>
-  `,
+        <h2>Welcome to Job Portal</h2>
+        <p>Your verification code is:</p>
+        <h1>${otp}</h1>
+        <p>This code is valid for 10 minutes.</p>
+        <p>Thank you for using Job Portal.</p>
+      `,
     });
 
     return res.status(200).json({
@@ -92,9 +93,9 @@ export const register = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Register Error:", error);
     return res.status(500).json({
-      message: "Register failed",
+      message: "Register failed: " + (error.message || "Internal Error"),
       success: false,
     });
   }
@@ -146,7 +147,7 @@ export const verifyRegisterOtp = async (req, res) => {
       user,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(500).json({
       message: "OTP verification failed",
       success: false,
@@ -208,7 +209,7 @@ export const login = async (req, res) => {
         success: true,
       });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(500).json({
       message: "Login failed",
       success: false,
@@ -237,20 +238,10 @@ export const forgotPassword = async (req, res) => {
 
     await user.save();
 
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-      tls: {
-        rejectUnauthorized: false,
-      },
-    });
+    const transporter = createTransporter();
 
-    const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
@@ -264,7 +255,7 @@ export const forgotPassword = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(500).json({
       message: "Something went wrong",
       success: false,
@@ -301,7 +292,7 @@ export const resetPassword = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(500).json({
       message: "Reset failed",
       success: false,
@@ -353,7 +344,7 @@ export const updateProfile = async (req, res) => {
       user,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(500).json({
       message: "Profile update failed",
       success: false,
@@ -369,6 +360,6 @@ export const logout = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
