@@ -1,11 +1,12 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import dotenv from "dotenv";
+import dns from "dns";
 
-import dns from "dns"; // 1. Import karein
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
+dns.setDefaultResultOrder("ipv4first");
 
-dns.setDefaultResultOrder("ipv4first"); // 2. Ye line exact yahan add karein
+dns.setDefaultResultOrder("ipv4first");
 
 import connectDB from "./utils/db.js";
 import userRoute from "./routes/user.route.js";
