@@ -7,17 +7,20 @@ import nodemailer from "nodemailer";
 import getDataUri from "../utils/datauri.js";
 import cloudinary from "../utils/cloud.js";
 
-// Transporter Configuration (Explicit IPv4 & Port 465 SSL for Render)
+// Transporter Configuration (Render IPv4 Bypass + Port 587 STARTTLS)
 const createTransporter = () => {
   return nodemailer.createTransport({
     host: "smtp.gmail.com",
-    port: 465,
-    secure: true, // SSL/TLS mode
+    port: 587,
+    secure: false, // STARTTLS use karega
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
-    family: 4, // Strict IPv4 Enforce
+    tls: {
+      rejectUnauthorized: false,
+    },
+    family: 4, // Render IPv6 connection error (ENETUNREACH) ko rokne ke liye
   });
 };
 
@@ -74,18 +77,20 @@ export const register = async (req, res) => {
 
     const transporter = createTransporter();
 
-    // Async Email (Bina await ke background mein dispatch)
+    // Non-blocking Async Dispatch
     transporter
       .sendMail({
-        from: `"JobGuru" <${process.env.EMAIL_USER}>`, // Custom Sender Name
+        from: `"JobGuru" <${process.env.EMAIL_USER}>`, // "JobGuru" Display Name
         to: email,
         subject: "JobGuru - Email Verification OTP",
         html: `
-        <h2>Welcome to JobGuru</h2>
-        <p>Your verification code is:</p>
-        <h1 style="color: #4F46E5;">${otp}</h1>
-        <p>This code is valid for 10 minutes.</p>
-        <p>Thank you for using JobGuru.</p>
+        <div style="font-family: Arial, sans-serif; padding: 20px;">
+          <h2>Welcome to JobGuru!</h2>
+          <p>Your verification code is:</p>
+          <h1 style="color: #4F46E5; letter-spacing: 2px;">${otp}</h1>
+          <p>This code is valid for 10 minutes.</p>
+          <p>Thank you for using JobGuru.</p>
+        </div>
       `,
       })
       .catch((err) => console.error("Background Mail Error:", err));
@@ -249,8 +254,14 @@ export const forgotPassword = async (req, res) => {
       .sendMail({
         from: `"JobGuru" <${process.env.EMAIL_USER}>`,
         to: email,
-        subject: "Password Reset - JobGuru",
-        html: `<a href="${resetUrl}">Reset Password</a>`,
+        subject: "JobGuru - Password Reset Link",
+        html: `
+        <div style="font-family: Arial, sans-serif; padding: 20px;">
+          <h2>Reset Your JobGuru Password</h2>
+          <p>Click the link below to reset your password:</p>
+          <a href="${resetUrl}" style="color: #4F46E5; font-weight: bold;">Reset Password</a>
+        </div>
+      `,
       })
       .catch((err) => console.error("Reset Mail Error:", err));
 
