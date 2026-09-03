@@ -20,7 +20,7 @@ export const register = async (req, res) => {
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const phoneRegex = /^[6-9]\d{9}$/;
+    const phoneRegex = /^(\+91)?[0-9]{10,15}$/;
 
     if (!emailRegex.test(email)) {
       return res.status(400).json({
