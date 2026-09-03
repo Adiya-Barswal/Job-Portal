@@ -7,15 +7,17 @@ import nodemailer from "nodemailer";
 import getDataUri from "../utils/datauri.js";
 import cloudinary from "../utils/cloud.js";
 
-// REUSABLE NODEMAILER TRANSPORTER (Fixed for Render)
+// Render IPv4 Enforced Nodemailer Transporter
 const createTransporter = () => {
   return nodemailer.createTransport({
-    service: "gmail",
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true, // Port 465 ke liye Direct SSL Connection
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
-    family: 4, // Enforce IPv4 to stop Render timeout
+    family: 4, // Render par IPv6 timeout completely stop karne ke liye
     tls: {
       rejectUnauthorized: false,
     },
