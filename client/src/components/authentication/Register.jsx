@@ -24,8 +24,14 @@ const Register = () => {
   const [otp, setOtp] = useState("");
   const navigate = useNavigate();
 
-  const { loading } = useSelector((store) => store.auth);
+  const { loading, user } = useSelector((store) => store.auth);
   const dispatch = useDispatch();
+
+  // Reset loading state on page load
+  useEffect(() => {
+    dispatch(setLoading(false));
+    if (user) navigate("/");
+  }, [user, navigate, dispatch]);
 
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
@@ -38,6 +44,16 @@ const Register = () => {
   // REGISTER
   const submitHandler = async (e) => {
     e.preventDefault();
+
+    if (
+      !input.fullname ||
+      !input.email ||
+      !input.password ||
+      !input.phoneNumber ||
+      !input.role
+    ) {
+      return toast.error("Please fill all required fields");
+    }
 
     const formData = new FormData();
     formData.append("fullname", input.fullname);
@@ -61,6 +77,7 @@ const Register = () => {
         toast.success(res.data.message);
       }
     } catch (error) {
+      console.error(error);
       toast.error(error.response?.data?.message || "Something went wrong");
     } finally {
       dispatch(setLoading(false));
@@ -69,7 +86,10 @@ const Register = () => {
 
   // VERIFY OTP
   const verifyOtpHandler = async () => {
+    if (!otp) return toast.error("Please enter OTP");
+
     try {
+      dispatch(setLoading(true));
       const res = await axios.post(`${USER_API_ENDPOINT}/verify-otp`, {
         email: input.email.trim().toLowerCase(),
         otp: otp.trim(),
@@ -80,15 +100,12 @@ const Register = () => {
         navigate("/login");
       }
     } catch (error) {
+      console.error(error);
       toast.error(error.response?.data?.message || "Invalid OTP");
+    } finally {
+      dispatch(setLoading(false));
     }
   };
-
-  const { user } = useSelector((store) => store.auth);
-
-  useEffect(() => {
-    if (user) navigate("/");
-  }, [user, navigate]);
 
   return (
     <div className="flex items-center justify-center max-w-7xl mx-auto">
@@ -109,6 +126,7 @@ const Register = () => {
             value={input.fullname}
             onChange={changeEventHandler}
             placeholder="john doe"
+            required
           />
         </div>
 
@@ -121,6 +139,7 @@ const Register = () => {
             value={input.email}
             onChange={changeEventHandler}
             placeholder="johndoe@gmail.com"
+            required
           />
         </div>
 
@@ -133,6 +152,7 @@ const Register = () => {
             value={input.password}
             onChange={changeEventHandler}
             placeholder="*************"
+            required
           />
         </div>
 
@@ -145,12 +165,13 @@ const Register = () => {
             value={input.phoneNumber}
             onChange={changeEventHandler}
             placeholder="+1234567890"
+            required
           />
         </div>
 
         {/* ROLE */}
         <RadioGroup className="flex gap-4 my-5">
-          <label>
+          <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="radio"
               name="role"
@@ -161,7 +182,7 @@ const Register = () => {
             Student
           </label>
 
-          <label>
+          <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="radio"
               name="role"
@@ -174,20 +195,21 @@ const Register = () => {
         </RadioGroup>
 
         {/* FILE */}
-        <Input type="file" accept="image/*" onChange={changeFileHandler} />
+        <div className="my-2">
+          <Input type="file" accept="image/*" onChange={changeFileHandler} />
+        </div>
 
-        {/* LOADER */}
+        {/* REGISTER BUTTON OR LOADER */}
         {loading ? (
           <div className="flex justify-center my-5">
             <Loader2 className="animate-spin text-blue-600" />
           </div>
         ) : (
           <>
-            {/* REGISTER BUTTON */}
             {!showOtp && (
               <button
                 type="submit"
-                className="w-full bg-black text-white py-2 mt-4"
+                className="w-full bg-black text-white py-2 mt-4 rounded-md hover:bg-gray-800"
               >
                 Register
               </button>
@@ -197,7 +219,6 @@ const Register = () => {
             {showOtp && (
               <div className="mt-4 border p-3 rounded-md">
                 <Label>Enter OTP</Label>
-
                 <Input
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
@@ -207,7 +228,7 @@ const Register = () => {
                 <button
                   type="button"
                   onClick={verifyOtpHandler}
-                  className="w-full mt-3 bg-green-600 text-white py-2"
+                  className="w-full mt-3 bg-green-600 text-white py-2 rounded-md hover:bg-green-700"
                 >
                   Verify OTP
                 </button>
@@ -215,9 +236,9 @@ const Register = () => {
             )}
 
             {/* LOGIN LINK */}
-            <p className="text-gray-500 mt-3">
-              Already have account?{" "}
-              <Link to="/login" className="text-blue-600">
+            <p className="text-gray-500 mt-3 text-center">
+              Already have an account?{" "}
+              <Link to="/login" className="text-blue-600 font-semibold">
                 Login
               </Link>
             </p>
