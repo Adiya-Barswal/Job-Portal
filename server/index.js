@@ -1,29 +1,22 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import dns from "dns";
 import dotenv from "dotenv";
 
-dns.setServers(["8.8.8.8", "8.8.4.4"]);
-dns.setDefaultResultOrder("ipv4first");
-
-dns.setDefaultResultOrder("ipv4first");
+dotenv.config({});
 
 import connectDB from "./utils/db.js";
 import userRoute from "./routes/user.route.js";
 import companyRoute from "./routes/company.route.js";
 import jobRoute from "./routes/job.route.js";
 import applicationRoute from "./routes/application.route.js";
-dotenv.config({});
 
 const app = express();
 
-// middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Allowed origins array for CORS
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
@@ -31,10 +24,8 @@ const allowedOrigins = [
   process.env.CLIENT_URL,
 ].filter(Boolean);
 
-// cors configuration
 const corsOptions = {
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl) or matching origins
     if (
       !origin ||
       allowedOrigins.includes(origin) ||
@@ -56,13 +47,11 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 
-// Api's
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/company", companyRoute);
 app.use("/api/v1/job", jobRoute);
 app.use("/api/v1/application", applicationRoute);
 
-// Start Server
 connectDB().then(() => {
   app.listen(PORT, () => {
     console.log(`Server running at port ${PORT}`);
